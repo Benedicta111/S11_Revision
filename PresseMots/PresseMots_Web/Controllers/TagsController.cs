@@ -1,6 +1,9 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using PresseMots.Models;
 using PresseMots.Models.Data;
 
 namespace PresseMots.Controllers
@@ -23,7 +26,19 @@ namespace PresseMots.Controllers
         // GET: Tags/Create
         public IActionResult Create()
         {
-            return View();
+            var tag = _context.Tags.Select(t => new SelectListItem
+            {
+                Text = t.Name,
+                Value=t.Id.ToString(),
+                
+
+            });
+
+            
+
+
+
+            return View(tag);
         }
 
         // POST: Tags/Create
@@ -31,21 +46,40 @@ namespace PresseMots.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Object model/*[Bind("Id,Name")] Tag tag*/)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Tag tag)
         {
             if (ModelState.IsValid)
             {
-                /*?*/
+                _context.Tags.Add(tag);
+                _context.SaveChanges();
+                TempData["Success"] = $"Tag {tag.Name} added";
+                return this.RedirectToAction("Index");
+
             }
-            return View(/*...*/);
+            var tags = _context.Tags.Select(t => new SelectListItem
+            {
+                Text = t.Name,
+                Value = t.Id.ToString(),
+
+
+            });
+            return View(tags);
         }
 
         // GET: Tags/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-           /*..?*/
+            var tag = _context.Tags.Find(id);
 
-            return View(/*..*/);
+            var tags = _context.Tags.Select(t => new SelectListItem
+            {
+                Text = t.Name,
+                Value = t.Id.ToString(),
+
+
+            });
+
+            return View(tags);
         }
 
         // POST: Tags/Delete/5
@@ -53,7 +87,16 @@ namespace PresseMots.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*...*/
+            var tag = _context.Tags.Find(id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+            _context.Tags.Remove(tag);
+            _context.SaveChanges();
+            TempData["Success"] = $"Tag {tag.Name} terminated";
+            return RedirectToAction("Index");
+
 
             return RedirectToAction(nameof(Index));
         }

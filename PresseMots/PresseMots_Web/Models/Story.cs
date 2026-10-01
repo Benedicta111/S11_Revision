@@ -26,7 +26,7 @@ namespace PresseMots.Models
         public string Content { get; set; }
 
         [NotMapped]
-        public IList<string> Tags { get; set; } = new List<string>();
+        public virtual IList<Tag>? Tags { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime? LastEditTime { get; set; }
         public DateTime? PublishTime { get; set; }
@@ -39,6 +39,7 @@ namespace PresseMots.Models
         public virtual IList<Share> Shares { get; set; }
 
         public virtual IList<Comment> Comments { get; set; }
+        public virtual List<StoryTag> StoryTags { get; set; }
 
 
     }
